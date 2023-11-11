@@ -1,0 +1,21 @@
+{
+  "name": "catchat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
+    "clean": "docker system prune -a -f && docker volume prune -f",
+    "prod-start": "",
+    "prod-stop": "",
+    "build": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml build",
+    "build-prod": ""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "build": "^0.1.4",
+    "run": "^1.4.0"
+  }
+}

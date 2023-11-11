@@ -1,0 +1,71 @@
+version: "3.8"
+services:
+  mongo.one.db:
+    container_name: mongo.one.db
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    networks:
+      - mongo.net
+    volumes:
+      - mongo.one.vol:/data/db
+      - ./scripts:/scripts:ro
+    depends_on:
+      - mongo.two.db
+      - mongo.three.db
+    healthcheck:
+      test: ["CMD-SHELL", "bash /scripts/rs-init.sh"]
+      start_period: 20s
+    command: --replSet catchatReplicas --bind_ip_all
+
+  mongo.two.db:
+    container_name: mongo.two.db
+    image: mongo
+    restart: always
+    ports:
+      - 27018:27017
+    networks:
+      - mongo.net
+    volumes:
+      - mongo.two.vol:/data/db
+    command: --replSet catchatReplicas --bind_ip_all
+
+  mongo.three.db:
+    container_name: mongo.three.db
+    image: mongo
+    restart: always
+    ports:
+      - 27019:27017
+    networks:
+      - mongo.net
+    volumes:
+      - mongo.three.vol:/data/db
+    command: --replSet catchatReplicas --bind_ip_all
+
+  catchat-server:
+    container_name: catchat-server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./.env
+    depends_on:
+      mongo.one.db:
+        condition: service_healthy
+    networks:
+      - mongo.net
+
+volumes:
+  mongo.one.vol:
+    name: "mongo.one.vol"
+  mongo.two.vol:
+    name: "mongo.two.vol"
+  mongo.three.vol:
+    name: "mongo.three.vol"
+
+networks:
+  mongo.net:
+    driver: bridge

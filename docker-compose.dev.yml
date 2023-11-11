@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  catchat-server:
+    volumes:
+      - ./server/src:/usr/src/catchat_server/src
+      - /usr/src/catchat_server/node_modules
+
+  frontend-server:
+    container_name: "frontend-dev-server"
+    build:
+      context: "./client"
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client/src:/usr/src/frontend_server/src
+    environment:
+      - WATCHPACK_POLLING=true
